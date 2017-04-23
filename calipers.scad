@@ -43,9 +43,9 @@ module shear2d(
     offsetDistance = (outerDiameter / 2) - (innerDiameter / 2) - minThickness;
     difference() {
         translate([-offsetDistance, 0, 0]) {
-            circle(d = outerDiameter);
+            circle(d = outerDiameter, $fn = 20);
         }
-        circle(d = innerDiameter, $fn = 20);  
+        circle(d = innerDiameter, $fn = 30);  
         translate([-outerDiameter / 2 - offsetDistance, 0, 0]) { square(outerDiameter); }
     }
 }
@@ -61,6 +61,8 @@ module calipers2d(
     shinLength = 60
 ) {
     legAngle = hingeAngle / 2;
+    shearOffsetAngle = 0;
+    shearMaxThickness = legThickness * 1.1;
     union() {
         difference() {
             difference() {
@@ -90,7 +92,7 @@ module calipers2d(
             -cos(legAngle) * thighLength,
             0
         ]) {
-            circle(legThickness);
+            circle(legThickness, $fn = 15);
         }
         // Shin 1
         translate([
@@ -106,12 +108,12 @@ module calipers2d(
         }
         // Shear 1
         translate([
-            -sin(legAngle) * thighLength,
+            -sin(legAngle) * thighLength + (legThickness * 0.75),
             -cos(legAngle) * thighLength - shinLength - (gaugeDiameter / 2) - (legThickness / 2),
             0
         ]) {
-            rotate(270 - (hingeAngle / 2), [0, 0, 1]) {
-                shear2d(gaugeDiameter, legThickness, minThickness = endThickness);
+            rotate(270 - shearOffsetAngle, [0, 0, 1]) {
+                shear2d(gaugeDiameter, shearMaxThickness, minThickness = endThickness);
             }
         }
         // Thigh 2
@@ -129,7 +131,7 @@ module calipers2d(
             -cos(legAngle) * thighLength,
             0
         ]) {
-            circle(legThickness);
+            circle(legThickness, $fn = 15);
         }
         // Shin 2
         translate([
@@ -145,13 +147,13 @@ module calipers2d(
         }
         // Shear 2
         translate([
-            sin(legAngle) * thighLength,
+            sin(legAngle) * thighLength - (legThickness * 0.75),
             -cos(legAngle) * thighLength - shinLength - (gaugeDiameter / 2) - (legThickness / 2),
             0
         ]) {
-            rotate(90 + (legAngle), [0, 0, 1]) {
+            rotate(90 + shearOffsetAngle, [0, 0, 1]) {
                 rotate(180, [0, 1, 0]) {
-                    shear2d(gaugeDiameter, legThickness, minThickness = endThickness);
+                    shear2d(gaugeDiameter, shearMaxThickness, minThickness = endThickness);
                 }
             }
         }
@@ -163,10 +165,10 @@ module calipers(gaugeDiameter, text) {
     hingeDiameter = gaugeDiameter * 2;
     thighLength = gaugeDiameter * 5;
     shinLength = thighLength;
-    endThickness = 1;
+    endThickness = 0.5;
     legThickness = gaugeDiameter / 3;
     hingeThickness = legThickness;
-    overallWidth = gaugeDiameter / 1.5;
+    overallWidth = legThickness * 2.5;
     textMargin = 1;
     difference() {
         linear_extrude(overallWidth) {
