@@ -61,7 +61,7 @@ module calipers2d(
     shinLength = 60
 ) {
     legAngle = hingeAngle / 2;
-    shearOffsetAngle = 0;
+    shearOffsetAngle = legAngle / 4;
     shearMaxThickness = legThickness * 1.1;
     union() {
         difference() {
@@ -164,7 +164,7 @@ module calipers(gaugeDiameter, text) {
     hingeAngle = 45;
     hingeDiameter = gaugeDiameter * 2;
     thighLength = gaugeDiameter * 5;
-    shinLength = thighLength;
+    shinLength = thighLength * 0.8;
     endThickness = 0.5;
     legThickness = gaugeDiameter / 3;
     hingeThickness = legThickness;
